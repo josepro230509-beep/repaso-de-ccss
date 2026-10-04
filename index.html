@@ -42,9 +42,8 @@
             <div class="space-y-4 mb-6">
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1">Cantidad de preguntas a jugar:</label>
-                    <!-- Eliminado el max="10" para que puedas poner el número que quieras libremente -->
                     <input type="number" id="input-count" min="1" value="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-cyan-400">
-                    <p class="text-xs text-slate-400 mt-1">Escribe la cantidad que desees (si pones más de las disponibles, se usarán todas las del banco).</p>
+                    <p class="text-xs text-slate-400 mt-1">Escribe la cantidad que desees libremente sin restricciones.</p>
                 </div>
 
                 <div>
@@ -277,7 +276,7 @@
             if (isNaN(parsedVal) || parsedVal < 1) {
                 configCount = 1;
             } else {
-                configCount = parsedVal;
+                configCount = parsedVal; // ¡Ya no hay límite máximo de 10!
             }
             configDiff = selectDifficulty.value;
             screenConfig.classList.add("hidden");
@@ -315,6 +314,8 @@
                 }
             }
 
+            // Si pides más preguntas de las que hay en el banco filtrado, toma las que estén disponibles para evitar errores, 
+            // pero si agregas más preguntas al código, podrás poner el número que quieras libremente.
             let finalCount = configCount;
             if (finalCount > pool.length) {
                 finalCount = pool.length;
