@@ -41,19 +41,16 @@
             
             <div class="space-y-4 mb-6">
                 <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-1">Cantidad de preguntas:</label>
-                    <select id="select-count" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-cyan-400">
-                        <option value="5">5 Preguntas (Rápido)</option>
-                        <option value="8" selected>8 Preguntas (Recomendado)</option>
-                        <option value="12">12 Preguntas (Completo)</option>
-                    </select>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Cantidad de preguntas a jugar:</label>
+                    <input type="number" id="input-count" min="1" max="10" value="8" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                    <p class="text-xs text-slate-400 mt-1">El banco actual cuenta con un total de 10 preguntas disponibles.</p>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1">Nivel de dificultad:</label>
                     <select id="select-difficulty" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-cyan-400">
                         <option value="all" selected>Mixto (Todos los niveles)</option>
-                        <option value="easy">Fásico / Conceptual</option>
+                        <option value="easy">Fácil / Conceptual</option>
                         <option value="medium">Intermedio (Análisis)</option>
                         <option value="hard">Avanzado (Crítico)</option>
                     </select>
@@ -253,7 +250,7 @@
         const btnRestart = document.getElementById("btn-restart");
         const btnBackHome = document.getElementById("btn-back-home");
 
-        const selectCount = document.getElementById("select-count");
+        const inputCount = document.getElementById("input-count");
         const selectDifficulty = document.getElementById("select-difficulty");
 
         const questionCounter = document.getElementById("question-counter");
@@ -275,7 +272,14 @@
         });
 
         btnSaveConfig.addEventListener("click", () => {
-            configCount = parseInt(selectCount.value);
+            let parsedVal = parseInt(inputCount.value);
+            if (isNaN(parsedVal) || parsedVal < 1) {
+                configCount = 1;
+            } else if (parsedVal > questionBank.length) {
+                configCount = questionBank.length;
+            } else {
+                configCount = parsedVal;
+            }
             configDiff = selectDifficulty.value;
             screenConfig.classList.add("hidden");
             startGame();
@@ -304,18 +308,20 @@
         });
 
         function startGame() {
-            // Filtrar preguntas según dificultad
             let pool = questionBank;
             if (configDiff !== "all") {
                 pool = questionBank.filter(item => item.difficulty === configDiff);
-                // Si hay muy pocas con ese filtro, respaldar con el banco total
-                if (pool.length < configCount) {
+                if (pool.length === 0) {
                     pool = questionBank;
                 }
             }
 
-            // Mezclar y recortar según la cantidad elegida
-            currentQuestions = [...pool].sort(() => 0.5 - Math.random()).slice(0, configCount);
+            let finalCount = configCount;
+            if (finalCount > pool.length) {
+                finalCount = pool.length;
+            }
+
+            currentQuestions = [...pool].sort(() => 0.5 - Math.random()).slice(0, finalCount);
             currentIndex = 0;
             score = 0;
 
@@ -328,9 +334,8 @@
 
         function showQuestion() {
             const q = currentQuestions[currentIndex];
-            questionCounter.setHTML(`Pregunta ${currentIndex + 1} de ${currentQuestions.length}`);
+            questionCounter.textContent = `Pregunta ${currentIndex + 1} de ${currentQuestions.length}`;
             
-            // Etiqueta de dificultad visual
             let diffLabel = "Medio";
             let diffClass = "bg-blue-500/20 text-cyan-300 border-blue-500/30";
             if (q.difficulty === "easy") {
@@ -361,7 +366,6 @@
             const q = currentQuestions[currentIndex];
             const allBtns = optionsContainer.getElementsByTagName("button");
 
-            // Deshabilitar todos los botones tras la selección
             for (let b of allBtns) {
                 b.disabled = true;
                 b.classList.remove("hover:bg-slate-700");
@@ -376,7 +380,6 @@
                 selectedBtn.classList.remove("bg-slate-900/80", "border-slate-700");
                 selectedBtn.classList.add("bg-rose-600/90", "border-rose-400", "text-white");
                 
-                // Mostrar la correcta
                 allBtns[q.answer].classList.remove("bg-slate-900/80", "border-slate-700");
                 allBtns[q.answer].classList.add("bg-emerald-600/90", "border-emerald-400", "text-white");
 
