@@ -3,234 +3,405 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juego de Repaso: El Fenómeno El Niño en Piura</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>FEN Piura - Quiz Interactivo</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fadeIn 0.4s ease-out forwards;
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
         }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4 relative">
+<body class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between">
 
-    <div id="app" class="w-full max-w-2xl bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 p-6 md:p-8 flex flex-col justify-between">
-        <div>
-            <!-- Header -->
-            <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
+    <!-- Header -->
+    <header class="w-full p-4 flex justify-between items-center max-w-2xl mx-auto">
+        <h1 class="text-xl font-bold tracking-wide text-cyan-400">🌊 FEN Piura: Repaso CC.SS.</h1>
+        <button id="btn-config" class="bg-slate-800 hover:bg-slate-700 p-2 rounded-full border border-slate-700 transition shadow-lg text-lg" title="Configuración">
+            ⚙️
+        </button>
+    </header>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-xl mx-auto p-4 flex-grow flex items-center justify-center">
+        
+        <!-- Pantalla de Inicio / Menú Principal -->
+        <div id="screen-start" class="w-full bg-slate-800/90 backdrop-blur-md p-6 rounded-2xl shadow-2xl border border-slate-700 text-center">
+            <h2 class="text-2xl font-bold mb-3 text-cyan-300">¡Prepárate para tu Evaluación!</h2>
+            <p class="text-slate-300 text-sm mb-6">Pon a prueba tus conocimientos sobre geomorfología, impactos económicos, resiliencia y vulnerabilidad del FEN en Piura.</p>
+            <button id="btn-start" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold py-3 px-6 rounded-xl transition shadow-lg text-lg">
+                🚀 Comenzar Quiz
+            </button>
+        </div>
+
+        <!-- Pantalla de Configuración (Modal / Panel) -->
+        <div id="screen-config" class="hidden w-full bg-slate-800/95 backdrop-blur-md p-6 rounded-2xl shadow-2xl border border-slate-700">
+            <h2 class="text-xl font-bold mb-4 text-cyan-400 flex items-center gap-2">⚙️ Configuración del Quiz</h2>
+            
+            <div class="space-y-4 mb-6">
                 <div>
-                    <h1 class="text-xl md:text-2xl font-bold text-amber-400">Repaso FEN Piura 🌧️</h1>
-                    <p class="text-xs text-slate-400">Simulador de preguntas clave para el profesor</p>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Cantidad de preguntas:</label>
+                    <select id="select-count" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                        <option value="5">5 Preguntas (Rápido)</option>
+                        <option value="8" selected>8 Preguntas (Recomendado)</option>
+                        <option value="12">12 Preguntas (Completo)</option>
+                    </select>
                 </div>
-                <div id="score-badge" class="bg-slate-700 px-3 py-1 rounded-full text-sm font-semibold text-slate-300">
-                    Pregunta <span id="current-q">1</span> de <span id="total-q">5</span>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Nivel de dificultad:</label>
+                    <select id="select-difficulty" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                        <option value="all" selected>Mixto (Todos los niveles)</option>
+                        <option value="easy">Fásico / Conceptual</option>
+                        <option value="medium">Intermedio (Análisis)</option>
+                        <option value="hard">Avanzado (Crítico)</option>
+                    </select>
                 </div>
             </div>
 
-            <!-- Question Container -->
-            <div id="quiz-container">
-                <div id="question-text" class="text-lg md:text-xl font-medium mb-6 text-slate-200">
-                    Cargando pregunta...
-                </div>
-
-                <div id="options-container" class="space-y-3 mb-6">
-                    <!-- Options injected via JS -->
-                </div>
-
-                <div id="feedback-container" class="hidden rounded-xl p-4 mb-6 transition-all">
-                    <p id="feedback-title" class="font-bold text-lg mb-1"></p>
-                    <p id="feedback-text" class="text-sm text-slate-300"></p>
-                </div>
-
-                <button id="next-btn" onclick="nextQuestion()" class="hidden w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 px-6 rounded-xl transition-all shadow-lg cursor-pointer">
-                    Siguiente Pregunta ➡️
+            <div class="flex gap-3">
+                <button id="btn-save-config" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2.5 rounded-xl transition shadow">
+                    Guardar y Jugar
+                </button>
+                <button id="btn-close-config" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2.5 rounded-xl transition">
+                    Cancelar
                 </button>
             </div>
+        </div>
 
-            <!-- Results Screen -->
-            <div id="results-container" class="hidden text-center py-6">
-                <div class="text-5xl mb-4">🏆</div>
-                <h2 class="text-2xl font-bold mb-2 text-amber-400">¡Repaso Completado!</h2>
-                <p id="final-score" class="text-lg text-slate-300 mb-6">Obtuviste X de Y puntos.</p>
-                <div class="space-y-3">
-                    <button onclick="restartQuiz()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 px-6 rounded-xl transition-all cursor-pointer">
-                        🔄 Volver a Jugar
-                    </button>
-                </div>
+        <!-- Pantalla de Preguntas -->
+        <div id="screen-quiz" class="hidden w-full bg-slate-800/90 backdrop-blur-md p-6 rounded-2xl shadow-2xl border border-slate-700">
+            <div class="flex justify-between items-center mb-4 text-xs font-semibold text-slate-400">
+                <span id="question-counter">Pregunta 1 de 8</span>
+                <span id="question-difficulty" class="bg-blue-500/20 text-cyan-300 px-2.5 py-1 rounded-full border border-blue-500/30">Medio</span>
+            </div>
+            
+            <h3 id="question-text" class="text-lg font-semibold mb-6 text-slate-100 leading-snug">
+                <!-- Texto de la pregunta -->
+            </h3>
+
+            <div id="options-container" class="space-y-3 mb-6">
+                <!-- Opciones dinámicas -->
+            </div>
+
+            <div id="feedback-box" class="hidden mb-4 p-3 rounded-xl text-sm font-medium">
+                <!-- Retroalimentación explicativa -->
+            </div>
+
+            <button id="btn-next" class="hidden w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold py-3 rounded-xl transition shadow-lg">
+                Siguiente Pregunta ➡️
+            </button>
+        </div>
+
+        <!-- Pantalla de Resultados -->
+        <div id="screen-results" class="hidden w-full bg-slate-800/90 backdrop-blur-md p-6 rounded-2xl shadow-2xl border border-slate-700 text-center">
+            <h2 class="text-2xl font-bold mb-2 text-cyan-300">¡Quiz Finalizado! 🎉</h2>
+            <p id="final-score-text" class="text-lg font-semibold text-slate-200 mb-2">Obtuviste 0 de 8 aciertos</p>
+            <p id="final-message" class="text-sm text-slate-400 mb-6">¡Buen esfuerzo! Repasa los conceptos clave para dominar tu examen.</p>
+            
+            <div class="flex flex-col gap-3">
+                <button id="btn-restart" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold py-3 rounded-xl transition shadow">
+                    🔄 Jugar Nuevamente
+                </button>
+                <button id="btn-back-home" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 rounded-xl transition">
+                    ⚙️ Cambiar Configuración
+                </button>
             </div>
         </div>
-    </div>
 
-    <!-- Floating Gear Menu (Bottom Right) -->
-    <div class="fixed bottom-6 right-6 z-50">
-        <div id="settings-menu" class="hidden absolute bottom-14 right-0 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl p-2 w-48 animate-fade-in space-y-1">
-            <button onclick="restartQuiz(); toggleMenu();" class="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 rounded-lg flex items-center gap-2 transition-all cursor-pointer">
-                🔄 Reiniciar Cuestionario
-            </button>
-            <button onclick="shuffleQuestions(); toggleMenu();" class="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 rounded-lg flex items-center gap-2 transition-all cursor-pointer">
-                🔀 Mezclar Preguntas
-            </button>
-        </div>
-        <button onclick="toggleMenu()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 p-3 rounded-full shadow-lg border border-slate-700 transition-all cursor-pointer flex items-center justify-center text-xl" title="Opciones y ajustes">
-            ⚙
-        </button>
-    </div>
+    </main>
 
+    <!-- Footer -->
+    <footer class="w-full p-4 text-center text-xs text-slate-500">
+        Repaso escolar • FEN Piura &copy; 2026
+    </footer>
+
+    <!-- Lógica del Juego -->
     <script>
-        let questions = [
+        const questionBank = [
             {
-                question: "El profesor te pregunta: 'En tus fichas hablas de amnesia social, ¿qué significa eso en palabras simples para que te entienda?'",
-                answerOptions: [
-                    { text: "Que la gente olvida rápido los desastres pasados y vuelve a construir casas en zonas peligrosas.", isCorrect: true, rationale: "¡Exacto! Describe cómo las generaciones repiten los mismos errores de ocupación sin aprender del pasado." },
-                    { text: "Una enfermedad que le da a la gente después de que llueve mucho.", isCorrect: false, rationale: "Incorrecto. No es una enfermedad médica, sino un término social sobre el olvido histórico." },
-                    { text: "Un protocolo que hace el gobierno para olvidar las deudas de los damnificados.", isCorrect: false, rationale: "Incorrecto. No tiene relación con deudas gubernamentales." },
-                    { text: "Cuando las autoridades pierden la memoria de los planos de la ciudad.", isCorrect: false, rationale: "Incorrecto. Se refiere a la conducta de la sociedad, no a pérdidas de documentos oficiales." }
-                ]
+                q: "¿Qué fenómeno oceanográfico-meteorológico suele intensificar las lluvias extremas y caudales en la región Piura?",
+                options: ["El Fenómeno El Niño (FEN)", "La corriente de Humboldt", "El friaje amazónico", "El anticiclón del Pacífico Sur"],
+                answer: 0,
+                difficulty: "easy",
+                explanation: "El FEN cálido genera un calentamiento anómalo del mar frente a Piura, incrementando la evaporación y provocando lluvias torrenciales."
             },
             {
-                question: "¿Cuál es la tesis central que defienden en su artículo reflexivo sobre Piura?",
-                answerOptions: [
-                    { text: "Que el FEN es un castigo divino que no se puede prevenir de ninguna manera.", isCorrect: false, rationale: "Falso. El texto plantea soluciones basadas en organización y prevención." },
-                    { text: "Que la reubicación de pobladores no debe verse como colapso, sino como estrategia de reducción de vulnerabilidad con apoyo comunitario.", isCorrect: true, rationale: "¡Muy bien! Esa es la postura exacta que redactaron en la ficha de síntesis." },
-                    { text: "Que todas las industrias textiles deben cerrar permanentemente en la costa norte.", isCorrect: false, rationale: "Incorrecto. Habla de pérdidas temporales y reconstrucción, no de cierre total." },
-                    { text: "Que las lluvias del FEN benefician por completo la economía agraria de Piura sin daños.", isCorrect: false, rationale: "Incorrecto. Las fichas detallan pérdidas económicas masivas e inundaciones." }
-                ]
+                q: "A qué se refiere el concepto de 'amnesia social' frente a los desastres recurrentes por el FEN en Piura:",
+                options: [
+                    "A una enfermedad temporal de la memoria por estrés.",
+                    "A la tendencia institucional y poblacional de olvidar los impactos pasados, impidiendo una adecuada prevención a largo plazo.",
+                    "A la pérdida de documentos históricos en los municipios.",
+                    "Al olvido de las rutas de evacuación tras una semana de lluvia."
+                ],
+                answer: 1,
+                difficulty: "medium",
+                explanation: "La amnesia social describe cómo la sociedad y las autoridades olvidan la magnitud de desastres anteriores, volviendo a construir en zonas vulnerables."
             },
             {
-                question: "Si el profesor te dice: 'Esto suena muy avanzado, ¿a qué se refieren con vulnerabilidad socioeconómica?', ¿cómo le responderías?",
-                answerOptions: [
-                    { text: "A que las familias más pobres, por falta de recursos, terminan viviendo en zonas peligrosas como laderas o riberas sin casas seguras.", isCorrect: true, rationale: "¡Perfecto! Traduces un término técnico a una realidad clara y sencilla." },
-                    { text: "A los impuestos que cobra el banco a las empresas textiles de Piura.", isCorrect: false, rationale: "Incorrecto. Eso es economía financiera, no vulnerabilidad territorial ante desastres." },
-                    { text: "A la cantidad de agua que cae por segundo en los canales de drenaje.", isCorrect: false, rationale: "Incorrecto. Eso corresponde a la dinámica hidrológica." },
-                    { text: "Al nivel de estudios que tiene el alcalde de la región.", isCorrect: false, rationale: "Incorrecto. No mide educación política, sino condiciones habitacionales y de riesgo." }
-                ]
+                q: "¿Cuál es uno de los principales impactos geomorfológicos observados en los cauces y quebradas de Piura durante un FEN severo?",
+                options: [
+                    "Formación estable de glaciares andinos.",
+                    "Activación masiva de quebradas secas, erosión fluvial y acumulación de sedimentos en valles bajos.",
+                    "Disminución drástica de la temperatura del suelo.",
+                    "Compactación total del terreno impidiendo cualquier flujo."
+                ],
+                answer: 1,
+                difficulty: "hard",
+                explanation: "Las intensas precipitaciones activan quebradas secas históricas, generando huaicos, desbordes y una fuerte erosión de riberas."
             },
             {
-                question: "¿Qué rol cumplieron autores como Seiner (2001) o los informes del INGEMMET dentro de su trabajo?",
-                answerOptions: [
-                    { text: "Demostrar que el FEN solo ocurrió una vez en toda la historia del Perú en el año 2017.", isCorrect: false, rationale: "Falso. Muestran que son eventos recurrentes (décadas pasadas, 1982, 1997)." },
-                    { text: "Servir como anclaje teórico y antecedentes para respaldar con datos históricos y científicos la investigación.", isCorrect: true, rationale: "¡Exacto! Son los referentes que dan sustento formal y científico al artículo." },
-                    { text: "Escribir novelas de ficción sobre tormentas en Lima y Piura.", isCorrect: false, rationale: "Incorrecto. Son fuentes de investigación científica e histórica, no novelas." },
-                    { text: "Ayudar a construir los canales de drenaje físico en Curumuy.", isCorrect: false, rationale: "Incorrecto. Los autores aportan conocimiento teórico y análisis, no construcción física." }
-                ]
+                q: "¿Qué sector económico en Piura suele sufrir pérdidas más inmediatas y devastadoras al iniciarse las lluvias e inundaciones del FEN?",
+                options: ["La industria aeroespacial", "La agricultura de exportación y cultivos locales (como el limón y banano)", "La minería submarina", "La manufactura de automóviles"],
+                answer: 1,
+                difficulty: "easy",
+                explanation: "Los campos inundados, caminos rurales colapsados y la pudrición de raíces afectan gravemente la actividad agrícola regional."
             },
             {
-                question: "¿Qué significa el concepto de 'resiliencia social y ecosistémica' según tus fichas?",
-                answerOptions: [
-                    { text: "La capacidad de una sociedad o ecosistema de absorber el impacto negativo de un desastre y recuperarse.", isCorrect: true, rationale: "¡Excelente! Esa definición exacta estaba en la ficha de Noemi Chávez." },
-                    { text: "La resistencia de los materiales de concreto ante un sismo de magnitud 8.", isCorrect: false, rationale: "Incorrecto. Eso es ingeniería estructural, no resiliencia social." },
-                    { text: "La obligación del gobierno de regalar casas nuevas sin importar el lugar.", isCorrect: false, rationale: "Incorrecto. La resiliencia implica adaptación y respuesta comunitaria propia." },
-                    { text: "La velocidad con la que se seca el lodo después de una inundación.", isCorrect: false, rationale: "Incorrecto. Describe la capacidad de respuesta humana y ambiental." }
-                ]
+                q: "¿Qué significa la 'resiliencia socio-ecosistémica' ante eventos extremos como el FEN?",
+                options: [
+                    "La capacidad de un sistema social y natural para resistir, absorber, adaptarse y recuperarse de los impactos negativos.",
+                    "Resistir sin sufrir ningún tipo de modificación estructural.",
+                    "Evitar que llueva mediante tecnologías artificiales.",
+                    "Abandonar permanentemente la región afectada."
+                ],
+                answer: 0,
+                difficulty: "hard",
+                explanation: "La resiliencia implica la aptitud de las comunidades y ecosistemas para reorganizarse y aprender tras la crisis climática."
+            },
+            {
+                q: "¿Qué factor incrementa principalmente la vulnerabilidad social frente al FEN en los asentamientos humanos de Piura?",
+                options: [
+                    "La falta de cobertura de internet satelital.",
+                    "La ubicación de viviendas en zonas de alto riesgo (cauces de ríos o laderas inestables) y la precariedad de los materiales de construcción.",
+                    "El uso excesivo de transporte público.",
+                    "La baja cantidad de centros comerciales."
+                ],
+                answer: 1,
+                difficulty: "medium",
+                explanation: "La vulnerabilidad está ligada a la pobreza urbana, asentamientos informales en zonas de flujo de agua y viviendas de adobe o esteras."
+            },
+            {
+                q: "Durante las emergencias por el FEN, ¿qué problema sanitario suele agravarse en las zonas urbanas y rurales inundadas de Piura?",
+                options: [
+                    "Propagación de enfermedades metaxénicas como el dengue y el zika debido a la acumulación de agua estancada.",
+                    "Aumento de enfermedades por frío extremo en la costa tropical.",
+                    "Plagas de osos hormigueros en las plazas principales.",
+                    "Contaminación general por nieve y granizo."
+                ],
+                answer: 0,
+                difficulty: "medium",
+                explanation: "El agua estancada y el colapso del sistema de desagüe propician la proliferación del mosquito transmisor del dengue."
+            },
+            {
+                q: "¿Cuál es el rol fundamental de la gestión del riesgo de desastres (GRD) antes de la llegada de un FEN anunciado?",
+                options: [
+                    "Esperar a que ocurra el desastre para recién comprar carpas.",
+                    "Planificar, mitigar y prevenir mediante defensas ribereñas, reubicación y preparación comunitaria.",
+                    "Declarar feriado indefinido en todo el departamento.",
+                    "Cerrar las fronteras departamentales."
+                ],
+                answer: 1,
+                difficulty: "hard",
+                explanation: "La GRD busca reducir las vulnerabilidades y anticiparse al peligro para salvar vidas y proteger la infraestructura."
+            },
+            {
+                q: "¿Cómo impacta el FEN en la infraestructura vial y de transporte en Piura?",
+                options: [
+                    "Mejora la velocidad de las carreteras gracias a la humedad.",
+                    "Colapsa puentes, rompe carreteras y aísla caseríos altoandinos y del bajo Piura, cortando la cadena de suministros.",
+                    "No afecta en absoluto el tránsito vehicular.",
+                    "Crea redes de transporte fluvial automáticas."
+                ],
+                answer: 1,
+                difficulty: "easy",
+                explanation: "Las crecidas de ríos y activaciones de quebradas destruyen puentes y tramos de carreteras clave para la región."
+            },
+            {
+                q: "¿Por qué es importante estudiar el FEN desde una perspectiva social y económica, y no solo meteorológica?",
+                options: [
+                    "Porque permite entender que los desastres no son solo 'naturales', sino el resultado de la vulnerabilidad humana y la gestión del territorio.",
+                    "Para calcular exactamente cuántos paraguas se deben importar.",
+                    "Únicamente para cumplir con el currículo escolar sin aplicación práctica.",
+                    "Para saber en qué meses exactos dejar de trabajar."
+                ],
+                answer: 0,
+                difficulty: "hard",
+                explanation: "Los eventos naturales se convierten en desastres debido a la falta de planificación, pobreza y exposición humana acumulada."
             }
         ];
 
+        // Estado del juego
+        let currentQuestions = [];
         let currentIndex = 0;
         let score = 0;
-        let answered = false;
+        let configCount = 8;
+        let configDiff = "all";
 
-        function toggleMenu() {
-            const menu = document.getElementById('settings-menu');
-            menu.classList.toggle('hidden');
-        }
+        // Elementos del DOM
+        const screenStart = document.getElementById("screen-start");
+        const screenConfig = document.getElementById("screen-config");
+        const screenQuiz = document.getElementById("screen-quiz");
+        const screenResults = document.getElementById("screen-results");
 
-        window.onclick = function(event) {
-            if (!event.target.matches('button') && !event.target.closest('#settings-menu')) {
-                document.getElementById('settings-menu').classList.add('hidden');
-            }
-        }
+        const btnStart = document.getElementById("btn-start");
+        const btnConfig = document.getElementById("btn-config");
+        const btnSaveConfig = document.getElementById("btn-save-config");
+        const btnCloseConfig = document.getElementById("btn-close-config");
+        const btnNext = document.getElementById("btn-next");
+        const btnRestart = document.getElementById("btn-restart");
+        const btnBackHome = document.getElementById("btn-back-home");
 
-        function renderQuestion() {
-            answered = false;
-            const q = questions[currentIndex];
-            document.getElementById('current-q').innerText = currentIndex + 1;
-            document.getElementById('total-q').innerText = questions.length;
-            document.getElementById('question-text').innerText = q.question;
-            
-            const optionsContainer = document.getElementById('options-container');
-            optionsContainer.innerHTML = '';
-            
-            q.answerOptions.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = "w-full text-left p-4 rounded-xl bg-slate-700/50 hover:bg-slate-700 border border-slate-600 transition-all text-slate-200 font-medium cursor-pointer";
-                btn.innerText = opt.text;
-                btn.onclick = () => selectOption(idx, btn);
-                optionsContainer.appendChild(btn);
-            });
+        const selectCount = document.getElementById("select-count");
+        const selectDifficulty = document.getElementById("select-difficulty");
 
-            document.getElementById('feedback-container').classList.add('hidden');
-            document.getElementById('next-btn').classList.add('hidden');
-        }
+        const questionCounter = document.getElementById("question-counter");
+        const questionDifficulty = document.getElementById("question-difficulty");
+        const questionText = document.getElementById("question-text");
+        const optionsContainer = document.getElementById("options-container");
+        const feedbackBox = document.getElementById("feedback-box");
+        const finalScoreText = document.getElementById("final-score-text");
 
-        function selectOption(idx, btnElement) {
-            if (answered) return;
-            answered = true;
-            
-            const q = questions[currentIndex];
-            const selectedOpt = q.answerOptions[idx];
-            const options = document.getElementById('options-container').children;
+        // Eventos de Navegación y Configuración
+        btnConfig.addEventListener("click", () => {
+            screenStart.classList.add("hidden");
+            screenConfig.classList.remove("hidden");
+        });
 
-            for (let i = 0; i < options.length; i++) {
-                options[i].disabled = true;
-                if (q.answerOptions[i].isCorrect) {
-                    options[i].classList.add('bg-emerald-900/40', 'border-emerald-500', 'text-emerald-200');
-                } else if (i === idx) {
-                    options[i].classList.add('bg-rose-900/40', 'border-rose-500', 'text-rose-200');
-                }
-            }
+        btnCloseConfig.addEventListener("click", () => {
+            screenConfig.classList.add("hidden");
+            screenStart.classList.remove("hidden");
+        });
 
-            if (selectedOpt.isCorrect) {
-                score++;
-                showFeedback(true, "¡Correcto!", selectedOpt.rationale);
-            } else {
-                showFeedback(false, "Incorrecto", selectedOpt.rationale);
-            }
+        btnSaveConfig.addEventListener("click", () => {
+            configCount = parseInt(selectCount.value);
+            configDiff = selectDifficulty.value;
+            screenConfig.classList.add("hidden");
+            startGame();
+        });
 
-            document.getElementById('next-btn').classList.remove('hidden');
-        }
+        btnStart.addEventListener("click", () => {
+            startGame();
+        });
 
-        function showFeedback(isCorrect, title, text) {
-            const fb = document.getElementById('feedback-container');
-            fb.className = `rounded-xl p-4 mb-6 border animate-fade-in ${isCorrect ? 'bg-emerald-950/55 border-emerald-600 text-emerald-200' : 'bg-rose-950/55 border-rose-600 text-rose-200'}`;
-            document.getElementById('feedback-title').innerText = title;
-            document.getElementById('feedback-text').innerText = text;
-            fb.classList.remove('hidden');
-        }
+        btnRestart.addEventListener("click", () => {
+            startGame();
+        });
 
-        function nextQuestion() {
+        btnBackHome.addEventListener("click", () => {
+            screenResults.classList.add("hidden");
+            screenStart.classList.remove("hidden");
+        });
+
+        btnNext.addEventListener("click", () => {
             currentIndex++;
-            if (currentIndex < questions.length) {
-                renderQuestion();
+            if (currentIndex < currentQuestions.length) {
+                showQuestion();
             } else {
                 showResults();
             }
+        });
+
+        function startGame() {
+            // Filtrar preguntas según dificultad
+            let pool = questionBank;
+            if (configDiff !== "all") {
+                pool = questionBank.filter(item => item.difficulty === configDiff);
+                // Si hay muy pocas con ese filtro, respaldar con el banco total
+                if (pool.length < configCount) {
+                    pool = questionBank;
+                }
+            }
+
+            // Mezclar y recortar según la cantidad elegida
+            currentQuestions = [...pool].sort(() => 0.5 - Math.random()).slice(0, configCount);
+            currentIndex = 0;
+            score = 0;
+
+            screenStart.classList.add("hidden");
+            screenResults.classList.add("hidden");
+            screenQuiz.classList.remove("hidden");
+
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = currentQuestions[currentIndex];
+            questionCounter.setHTML(`Pregunta ${currentIndex + 1} de ${currentQuestions.length}`);
+            
+            // Etiqueta de dificultad visual
+            let diffLabel = "Medio";
+            let diffClass = "bg-blue-500/20 text-cyan-300 border-blue-500/30";
+            if (q.difficulty === "easy") {
+                diffLabel = "Fácil";
+                diffClass = "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
+            } else if (q.difficulty === "hard") {
+                diffLabel = "Difícil";
+                diffClass = "bg-rose-500/20 text-rose-300 border-rose-500/30";
+            }
+            questionDifficulty.className = `px-2.5 py-1 rounded-full border text-xs font-semibold ${diffClass}`;
+            questionDifficulty.textContent = diffLabel;
+
+            questionText.textContent = q.q;
+            optionsContainer.innerHTML = "";
+            feedbackBox.classList.add("hidden");
+            btnNext.classList.add("hidden");
+
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement("button");
+                btn.className = "w-full text-left p-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-700 border border-slate-700 text-slate-200 text-sm font-medium transition shadow";
+                btn.textContent = opt;
+                btn.onclick = () => selectOption(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(selectedIndex, selectedBtn) {
+            const q = currentQuestions[currentIndex];
+            const allBtns = optionsContainer.getElementsByTagName("button");
+
+            // Deshabilitar todos los botones tras la selección
+            for (let b of allBtns) {
+                b.disabled = true;
+                b.classList.remove("hover:bg-slate-700");
+            }
+
+            if (selectedIndex === q.answer) {
+                selectedBtn.classList.remove("bg-slate-900/80", "border-slate-700");
+                selectedBtn.classList.add("bg-emerald-600/90", "border-emerald-400", "text-white");
+                score++;
+                feedbackBox.className = "mb-4 p-3.5 rounded-xl text-sm font-medium bg-emerald-900/50 border border-emerald-600 text-emerald-200";
+            } else {
+                selectedBtn.classList.remove("bg-slate-900/80", "border-slate-700");
+                selectedBtn.classList.add("bg-rose-600/90", "border-rose-400", "text-white");
+                
+                // Mostrar la correcta
+                allBtns[q.answer].classList.remove("bg-slate-900/80", "border-slate-700");
+                allBtns[q.answer].classList.add("bg-emerald-600/90", "border-emerald-400", "text-white");
+
+                feedbackBox.className = "mb-4 p-3.5 rounded-xl text-sm font-medium bg-rose-900/50 border border-rose-600 text-rose-200";
+            }
+
+            feedbackBox.textContent = q.explanation;
+            feedbackBox.classList.remove("hidden");
+            btnNext.classList.remove("hidden");
         }
 
         function showResults() {
-            document.getElementById('quiz-container').classList.add('hidden');
-            document.getElementById('results-container').classList.remove('hidden');
-            document.getElementById('final-score').innerText = `Obtuviste ${score} de ${questions.length} aciertos.`;
-            document.getElementById('score-badge').parentElement.classList.add('hidden');
-        }
+            screenQuiz.classList.add("hidden");
+            screenResults.classList.remove("hidden");
+            finalScoreText.textContent = `Obtuviste ${score} de ${currentQuestions.length} aciertos`;
 
-        function restartQuiz() {
-            currentIndex = 0;
-            score = 0;
-            document.getElementById('results-container').classList.add('hidden');
-            document.getElementById('quiz-container').classList.remove('hidden');
-            document.getElementById('score-badge').parentElement.classList.remove('hidden');
-            renderQuestion();
+            const percentage = (score / currentQuestions.length) * 100;
+            let msg = "¡Sigue repasando para afianzar los conceptos clave!";
+            if (percentage >= 80) {
+                msg = "¡Excelente dominio del tema! Estás totalmente listo para tu evaluación. 🌟";
+            } else if (percentage >= 50) {
+                msg = "¡Buen trabajo! Tienes bases sólidas, dale una rápida ojeada a los puntos de vulnerabilidad y resiliencia. 👍";
+            }
+            document.getElementById("final-message").textContent = msg;
         }
-
-        function shuffleQuestions() {
-            questions.sort(() => Math.random() - 0.5);
-            restartQuiz();
-        }
-
-        renderQuestion();
     </script>
 </body>
 </html>
