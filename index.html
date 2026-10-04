@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Repaso: El Fenómeno El Niño en Piura</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4 relative">
+
+    <div id="app" class="w-full max-w-2xl bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 p-6 md:p-8 flex flex-col justify-between">
+        <div>
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold text-amber-400">Repaso FEN Piura 🌧️</h1>
+                    <p class="text-xs text-slate-400">Simulador de preguntas clave para el profesor</p>
+                </div>
+                <div id="score-badge" class="bg-slate-700 px-3 py-1 rounded-full text-sm font-semibold text-slate-300">
+                    Pregunta <span id="current-q">1</span> de <span id="total-q">5</span>
+                </div>
+            </div>
+
+            <!-- Question Container -->
+            <div id="quiz-container">
+                <div id="question-text" class="text-lg md:text-xl font-medium mb-6 text-slate-200">
+                    Cargando pregunta...
+                </div>
+
+                <div id="options-container" class="space-y-3 mb-6">
+                    <!-- Options injected via JS -->
+                </div>
+
+                <div id="feedback-container" class="hidden rounded-xl p-4 mb-6 transition-all">
+                    <p id="feedback-title" class="font-bold text-lg mb-1"></p>
+                    <p id="feedback-text" class="text-sm text-slate-300"></p>
+                </div>
+
+                <button id="next-btn" onclick="nextQuestion()" class="hidden w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 px-6 rounded-xl transition-all shadow-lg cursor-pointer">
+                    Siguiente Pregunta ➡️
+                </button>
+            </div>
+
+            <!-- Results Screen -->
+            <div id="results-container" class="hidden text-center py-6">
+                <div class="text-5xl mb-4">🏆</div>
+                <h2 class="text-2xl font-bold mb-2 text-amber-400">¡Repaso Completado!</h2>
+                <p id="final-score" class="text-lg text-slate-300 mb-6">Obtuviste X de Y puntos.</p>
+                <div class="space-y-3">
+                    <button onclick="restartQuiz()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 px-6 rounded-xl transition-all cursor-pointer">
+                        🔄 Volver a Jugar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Gear Menu (Bottom Right) -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <div id="settings-menu" class="hidden absolute bottom-14 right-0 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl p-2 w-48 animate-fade-in space-y-1">
+            <button onclick="restartQuiz(); toggleMenu();" class="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 rounded-lg flex items-center gap-2 transition-all cursor-pointer">
+                🔄 Reiniciar Cuestionario
+            </button>
+            <button onclick="shuffleQuestions(); toggleMenu();" class="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 rounded-lg flex items-center gap-2 transition-all cursor-pointer">
+                🔀 Mezclar Preguntas
+            </button>
+        </div>
+        <button onclick="toggleMenu()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 p-3 rounded-full shadow-lg border border-slate-700 transition-all cursor-pointer flex items-center justify-center text-xl" title="Opciones y ajustes">
+            ⚙
+        </button>
+    </div>
+
+    <script>
+        let questions = [
+            {
+                question: "El profesor te pregunta: 'En tus fichas hablas de amnesia social, ¿qué significa eso en palabras simples para que te entienda?'",
+                answerOptions: [
+                    { text: "Que la gente olvida rápido los desastres pasados y vuelve a construir casas en zonas peligrosas.", isCorrect: true, rationale: "¡Exacto! Describe cómo las generaciones repiten los mismos errores de ocupación sin aprender del pasado." },
+                    { text: "Una enfermedad que le da a la gente después de que llueve mucho.", isCorrect: false, rationale: "Incorrecto. No es una enfermedad médica, sino un término social sobre el olvido histórico." },
+                    { text: "Un protocolo que hace el gobierno para olvidar las deudas de los damnificados.", isCorrect: false, rationale: "Incorrecto. No tiene relación con deudas gubernamentales." },
+                    { text: "Cuando las autoridades pierden la memoria de los planos de la ciudad.", isCorrect: false, rationale: "Incorrecto. Se refiere a la conducta de la sociedad, no a pérdidas de documentos oficiales." }
+                ]
+            },
+            {
+                question: "¿Cuál es la tesis central que defienden en su artículo reflexivo sobre Piura?",
+                answerOptions: [
+                    { text: "Que el FEN es un castigo divino que no se puede prevenir de ninguna manera.", isCorrect: false, rationale: "Falso. El texto plantea soluciones basadas en organización y prevención." },
+                    { text: "Que la reubicación de pobladores no debe verse como colapso, sino como estrategia de reducción de vulnerabilidad con apoyo comunitario.", isCorrect: true, rationale: "¡Muy bien! Esa es la postura exacta que redactaron en la ficha de síntesis." },
+                    { text: "Que todas las industrias textiles deben cerrar permanentemente en la costa norte.", isCorrect: false, rationale: "Incorrecto. Habla de pérdidas temporales y reconstrucción, no de cierre total." },
+                    { text: "Que las lluvias del FEN benefician por completo la economía agraria de Piura sin daños.", isCorrect: false, rationale: "Incorrecto. Las fichas detallan pérdidas económicas masivas e inundaciones." }
+                ]
+            },
+            {
+                question: "Si el profesor te dice: 'Esto suena muy avanzado, ¿a qué se refieren con vulnerabilidad socioeconómica?', ¿cómo le responderías?",
+                answerOptions: [
+                    { text: "A que las familias más pobres, por falta de recursos, terminan viviendo en zonas peligrosas como laderas o riberas sin casas seguras.", isCorrect: true, rationale: "¡Perfecto! Traduces un término técnico a una realidad clara y sencilla." },
+                    { text: "A los impuestos que cobra el banco a las empresas textiles de Piura.", isCorrect: false, rationale: "Incorrecto. Eso es economía financiera, no vulnerabilidad territorial ante desastres." },
+                    { text: "A la cantidad de agua que cae por segundo en los canales de drenaje.", isCorrect: false, rationale: "Incorrecto. Eso corresponde a la dinámica hidrológica." },
+                    { text: "Al nivel de estudios que tiene el alcalde de la región.", isCorrect: false, rationale: "Incorrecto. No mide educación política, sino condiciones habitacionales y de riesgo." }
+                ]
+            },
+            {
+                question: "¿Qué rol cumplieron autores como Seiner (2001) o los informes del INGEMMET dentro de su trabajo?",
+                answerOptions: [
+                    { text: "Demostrar que el FEN solo ocurrió una vez en toda la historia del Perú en el año 2017.", isCorrect: false, rationale: "Falso. Muestran que son eventos recurrentes (décadas pasadas, 1982, 1997)." },
+                    { text: "Servir como anclaje teórico y antecedentes para respaldar con datos históricos y científicos la investigación.", isCorrect: true, rationale: "¡Exacto! Son los referentes que dan sustento formal y científico al artículo." },
+                    { text: "Escribir novelas de ficción sobre tormentas en Lima y Piura.", isCorrect: false, rationale: "Incorrecto. Son fuentes de investigación científica e histórica, no novelas." },
+                    { text: "Ayudar a construir los canales de drenaje físico en Curumuy.", isCorrect: false, rationale: "Incorrecto. Los autores aportan conocimiento teórico y análisis, no construcción física." }
+                ]
+            },
+            {
+                question: "¿Qué significa el concepto de 'resiliencia social y ecosistémica' según tus fichas?",
+                answerOptions: [
+                    { text: "La capacidad de una sociedad o ecosistema de absorber el impacto negativo de un desastre y recuperarse.", isCorrect: true, rationale: "¡Excelente! Esa definición exacta estaba en la ficha de Noemi Chávez." },
+                    { text: "La resistencia de los materiales de concreto ante un sismo de magnitud 8.", isCorrect: false, rationale: "Incorrecto. Eso es ingeniería estructural, no resiliencia social." },
+                    { text: "La obligación del gobierno de regalar casas nuevas sin importar el lugar.", isCorrect: false, rationale: "Incorrecto. La resiliencia implica adaptación y respuesta comunitaria propia." },
+                    { text: "La velocidad con la que se seca el lodo después de una inundación.", isCorrect: false, rationale: "Incorrecto. Describe la capacidad de respuesta humana y ambiental." }
+                ]
+            }
+        ];
+
+        let currentIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        function toggleMenu() {
+            const menu = document.getElementById('settings-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('button') && !event.target.closest('#settings-menu')) {
+                document.getElementById('settings-menu').classList.add('hidden');
+            }
+        }
+
+        function renderQuestion() {
+            answered = false;
+            const q = questions[currentIndex];
+            document.getElementById('current-q').innerText = currentIndex + 1;
+            document.getElementById('total-q').innerText = questions.length;
+            document.getElementById('question-text').innerText = q.question;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            q.answerOptions.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl bg-slate-700/50 hover:bg-slate-700 border border-slate-600 transition-all text-slate-200 font-medium cursor-pointer";
+                btn.innerText = opt.text;
+                btn.onclick = () => selectOption(idx, btn);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('feedback-container').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+        }
+
+        function selectOption(idx, btnElement) {
+            if (answered) return;
+            answered = true;
+            
+            const q = questions[currentIndex];
+            const selectedOpt = q.answerOptions[idx];
+            const options = document.getElementById('options-container').children;
+
+            for (let i = 0; i < options.length; i++) {
+                options[i].disabled = true;
+                if (q.answerOptions[i].isCorrect) {
+                    options[i].classList.add('bg-emerald-900/40', 'border-emerald-500', 'text-emerald-200');
+                } else if (i === idx) {
+                    options[i].classList.add('bg-rose-900/40', 'border-rose-500', 'text-rose-200');
+                }
+            }
+
+            if (selectedOpt.isCorrect) {
+                score++;
+                showFeedback(true, "¡Correcto!", selectedOpt.rationale);
+            } else {
+                showFeedback(false, "Incorrecto", selectedOpt.rationale);
+            }
+
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function showFeedback(isCorrect, title, text) {
+            const fb = document.getElementById('feedback-container');
+            fb.className = `rounded-xl p-4 mb-6 border animate-fade-in ${isCorrect ? 'bg-emerald-950/55 border-emerald-600 text-emerald-200' : 'bg-rose-950/55 border-rose-600 text-rose-200'}`;
+            document.getElementById('feedback-title').innerText = title;
+            document.getElementById('feedback-text').innerText = text;
+            fb.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex < questions.length) {
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('results-container').classList.remove('hidden');
+            document.getElementById('final-score').innerText = `Obtuviste ${score} de ${questions.length} aciertos.`;
+            document.getElementById('score-badge').parentElement.classList.add('hidden');
+        }
+
+        function restartQuiz() {
+            currentIndex = 0;
+            score = 0;
+            document.getElementById('results-container').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            document.getElementById('score-badge').parentElement.classList.remove('hidden');
+            renderQuestion();
+        }
+
+        function shuffleQuestions() {
+            questions.sort(() => Math.random() - 0.5);
+            restartQuiz();
+        }
+
+        renderQuestion();
+    </script>
+</body>
+</html>
