@@ -43,7 +43,7 @@
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1">Cantidad de preguntas a jugar:</label>
                     <input type="number" id="input-count" min="1" value="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-cyan-400">
-                    <p class="text-xs text-slate-400 mt-1">Escribe la cantidad que desees libremente sin restricciones.</p>
+                    <p class="text-xs text-slate-400 mt-1">Escribe la cantidad que desees sin restricciones.</p>
                 </div>
 
                 <div>
@@ -226,6 +226,121 @@
                 answer: 0,
                 difficulty: "hard",
                 explanation: "Los eventos naturales se convierten en desastres debido a la falta de planificación, pobreza y exposición humana acumulada."
+            },
+            {
+                q: "¿Qué río principal atraviesa la ciudad de Piura y suele desbordarse críticamente durante un evento FEN severo?",
+                options: ["Río Piura", "Río Chira", "Río Tumbes", "Río Rímac"],
+                answer: 0,
+                difficulty: "easy",
+                explanation: "El río Piura incrementa exponencialmente su caudal debido a las torrenciales lluvias en su cuenca alta y media."
+            },
+            {
+                q: "¿Qué consecuencias trae la acumulación masiva de sedimentos en el reservorio Poechos durante el FEN?",
+                options: [
+                    "Aumenta su capacidad de almacenamiento al doble.",
+                    "Reduce su capacidad útil de almacenamiento, elevando el riesgo de colapso y obligando a descargas controladas.",
+                    "Purifica el agua para consumo inmediato sin tratar.",
+                    "Genera energía nuclear para la región."
+                ],
+                answer: 1,
+                difficulty: "hard",
+                explanation: "La sedimentación azolva el reservorio Poechos, disminuyendo la cantidad de agua que puede retener y poniendo en alerta a la región."
+            },
+            {
+                q: "¿Cuál es el impacto del FEN en el sector pesquero artesanal de la costa de Piura (Paita, Sechura)?",
+                options: [
+                    "Las especies de aguas frías migran o disminuyen, alterando la pesca tradicional, aunque aparecen otras especies cálidas temporales.",
+                    "Se incrementa la captura de anchoveta en un 500%.",
+                    "No hay ningún cambio en el ecosistema marino.",
+                    "Los barcos flotan mejor gracias a la lluvia."
+                ],
+                answer: 0,
+                difficulty: "medium",
+                explanation: "El cambio de temperatura del agua ahuyenta recursos típicos de la Corriente Peruana, obligando a los pescadores a adaptar sus faenas."
+            },
+            {
+                q: "Desde el punto de vista territorial, ¿qué medida preventiva a largo plazo evita mayores daños por inundación en Piura?",
+                options: [
+                    "Pintar las casas de color azul para repeler el agua.",
+                    "Respetar las fajas marginales de los ríos y reubicar centros poblados fuera de zonas vulnerables.",
+                    "Construir techos de vidrio en toda la ciudad.",
+                    "Prohibir el uso de paraguas."
+                ],
+                answer: 1,
+                difficulty: "medium",
+                explanation: "La zonificación urbana adecuada y el respeto a las áreas de inundación natural evitan pérdidas humanas y materiales catastróficas."
+            },
+            {
+                q: "¿Qué rol cumplen los gobiernos locales y regionales ante la alerta de un FEN extraordinario?",
+                options: [
+                    "Esperar a recibir donaciones internacionales sin plan previo.",
+                    "Ejecutar presupuestos de prevención, descolmatación de cauces y activar centros de operaciones de emergencia (COER).",
+                    "Cerrar temporalmente todas las escuelas para siempre.",
+                    "Vender maquinaria pesada a otros departamentos."
+                ],
+                answer: 1,
+                difficulty: "medium",
+                explanation: "Las autoridades tienen la responsabilidad de la gestión reactiva y preventiva mediante el uso oportuno de recursos públicos."
+            },
+            {
+                q: "¿Cómo afecta el FEN a la red de servicios básicos (agua potable y alcantarillado) en ciudades como Piura y Castilla?",
+                options: [
+                    "Los colapsa debido a aniegos, filtraciones de aguas servidas e inundación de plantas de tratamiento.",
+                    "Mejora la presión del agua en todos los grifos.",
+                    "Limpia automáticamente todas las tuberías subterráneas.",
+                    "Convierte el agua de desagüe en agua potable."
+                ],
+                answer: 0,
+                difficulty: "medium",
+                explanation: "El colapso del sistema de saneamiento es uno de los problemas más graves que incrementa el riesgo de epidemias."
+            },
+            {
+                q: "¿Qué caracteriza geomorfológicamente al territorio de la costa piurana frente a lluvias extraordinarias?",
+                options: [
+                    "Presencia de suelos rocosos impermeables y quebradas secas que se reactivan con violencia por la pendiente.",
+                    "Terrenos montañosos cubiertos de nieve perpetua.",
+                    "Presencia masiva de volcanes activos.",
+                    "Suelos totalmente planos sin ninguna pendiente."
+                ],
+                answer: 0,
+                difficulty: "hard",
+                explanation: "La geomorfología de Piura cuenta con quebradas y planicies aluviales que actúan como cauces naturales cuando caen precipitaciones intensas."
+            },
+            {
+                q: "¿Qué es el Fenómeno El Niño Costero y en qué se diferencia del FEN global?",
+                options: [
+                    "Afecta principalmente el calentamiento anómalo del mar frente a las costas de Perú y Ecuador sin requerir anomalías en el Pacífico central.",
+                    "Es un fenómeno que solo ocurre en invierno en la sierra.",
+                    "Ocurre únicamente en la selva amazónica.",
+                    "Es una corriente de aire frío proveniente de la Antártida."
+                ],
+                answer: 0,
+                difficulty: "hard",
+                explanation: "El Niño Costero se centra en el calentamiento de la región 1+2 del Pacífico oriental, impactando de forma directa y drástica a Piura."
+            },
+            {
+                q: "¿Por qué se dice que el riesgo de desastre es una construcción social?",
+                options: [
+                    "Porque la naturaleza actúa sola sin intervención humana.",
+                    "Porque surge de la combinación entre un peligro natural y las condiciones de vulnerabilidad generadas por las decisiones humanas.",
+                    "Porque se construye únicamente con cemento y ladrillo.",
+                    "Porque es un invento de los medios de comunicación."
+                ],
+                answer: 1,
+                difficulty: "hard",
+                explanation: "El desastre no es solo el evento físico, sino la vulnerabilidad social, económica y política construida a lo largo del tiempo."
+            },
+            {
+                q: "¿Qué impacto socioemocional y educativo experimentan los estudiantes en Piura durante un FEN severo?",
+                options: [
+                    "Suspensión temporal de clases, daños en la infraestructura escolar y afectación en la continuidad de sus aprendizajes.",
+                    "Mejora notable en sus calificaciones por estudiar en casa.",
+                    "Vacaciones automáticas de seis meses sin consecuencias.",
+                    "Ningún tipo de alteración en su rutina diaria."
+                ],
+                answer: 0,
+                difficulty: "easy",
+                explanation: "Las escuelas inundadas o usadas como albergues interrumpen el año escolar y generan estrés en la comunidad educativa."
             }
         ];
 
@@ -276,7 +391,7 @@
             if (isNaN(parsedVal) || parsedVal < 1) {
                 configCount = 1;
             } else {
-                configCount = parsedVal; // ¡Ya no hay límite máximo de 10!
+                configCount = parsedVal; // ¡Sin límites fijos!
             }
             configDiff = selectDifficulty.value;
             screenConfig.classList.add("hidden");
@@ -314,14 +429,16 @@
                 }
             }
 
-            // Si pides más preguntas de las que hay en el banco filtrado, toma las que estén disponibles para evitar errores, 
-            // pero si agregas más preguntas al código, podrás poner el número que quieras libremente.
+            // Lógica flexible: Permite cualquier cantidad ingresada por el usuario (incluso si excede el banco actual)
             let finalCount = configCount;
-            if (finalCount > pool.length) {
-                finalCount = pool.length;
+            let shuffled = [...pool].sort(() => 0.5 - Math.random());
+            
+            currentQuestions = [];
+            while (currentQuestions.length < finalCount) {
+                currentQuestions.push(...shuffled.sort(() => 0.5 - Math.random()));
             }
+            currentQuestions = currentQuestions.slice(0, finalCount);
 
-            currentQuestions = [...pool].sort(() => 0.5 - Math.random()).slice(0, finalCount);
             currentIndex = 0;
             score = 0;
 
